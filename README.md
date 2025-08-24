@@ -6,9 +6,7 @@ This is a simple sudoku solver. Doesn't work perfectly yet (need to add guessing
 
 | -h/--help | prints this same table to the screen|
 |---|---|
-| -s/--solve '<'sudoku'>' | solve an 81 string that represents a sudoku puzzle |
-|---|---|
-| -f/--file '<'sudoku'>'.csv | solve a file full of sudoku puzzles |
-|---|---|
+| -s/--solve ```sudoku``` | solve an 81 string that represents a sudoku puzzle |
+| -f/--file ```sudoku.csv``` | solve a file full of sudoku puzzles |
 
 
