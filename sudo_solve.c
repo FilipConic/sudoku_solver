@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "sudoku.h"
 
 int main(int argc, char** argv) {
@@ -18,7 +19,8 @@ int main(int argc, char** argv) {
 		   	);
 			return 1;
 		}
-		sudoku_solve_file(argv[2], NULL, 256);
+		int count = (argc == 4 ? atoi(argv[3]) : 256);
+		sudoku_solve_file(argv[2], count);
 	} else if (!strcmp(argv[1], "-s") || !strcmp(argv[1], "--solve")) {
 		if (argc < 3) {
 			fprintf(stderr, 
@@ -33,6 +35,17 @@ int main(int argc, char** argv) {
 		sudoku_print_solution(sudoku);
 		#endif
 		sudoku_free(sudoku);
+	} else if (!strcmp(argv[1], "-t") || !strcmp(argv[1], "--test")) {
+		if (argc < 3) {
+			fprintf(stderr, 
+		   		"ERROR: for the 'test' flag you need to provide a .csv file with sudoku puzzles and their solutions!\n"
+		   		"example: ./sudo_solve -t <input>.csv [count of test]\n"
+		   	);
+			return 1;
+		}
+		int count = (argc == 4 ? atoi(argv[3]) : 256);
+		int correct_count = sudoku_test_file(argv[2], NULL, count);
+		printf("count of correctly solved sudoku puzzles is %d out of %d, which is %3.2lf%% correct\n", correct_count, count, (double)correct_count / count * 100.0);
 	}
 	return 0;
 }

@@ -185,10 +185,30 @@ void sudoku_print(const char* sudo) {
 }
 #endif
 
-void sudoku_solve_file(const char* file_path, Sudoku* sudo, int count_to_solve) {
+void sudoku_solve_file(const char* file_path, int count_to_solve) {
 	FILE* file = fopen(file_path, "rb");
 	if (!file) {
 		return;
+	}
+
+	Sudoku ctx = { 0 };
+
+	for (int counter = 0; counter < count_to_solve; ++counter) {
+		char buffer[81] = { 0 };
+		if (fread(buffer, sizeof(char), 81, file) != 81) break;
+		fseek(file, 1, SEEK_CUR);
+		sudoku_solve(buffer, &ctx);
+		context_to_sudoku(&ctx, buffer);
+		printf("%-3d %.*s\n", counter + 1, 81, buffer);
+	}
+
+	fclose(file);
+	return;
+}
+int sudoku_test_file(const char* file_path, Sudoku* sudo, int count_to_solve) {
+	FILE* file = fopen(file_path, "rb");
+	if (!file) {
+		return 0;
 	}
 
 	Sudoku ctx = { 0 };
@@ -196,6 +216,7 @@ void sudoku_solve_file(const char* file_path, Sudoku* sudo, int count_to_solve) 
 		sudo = &ctx;
 	}
 
+	int res = 0;
 	fseek(file, 16, SEEK_CUR);
 	for (int count = 0; count < count_to_solve; ++count) {
 		char buffer[81] = { 0 };
@@ -207,12 +228,15 @@ void sudoku_solve_file(const char* file_path, Sudoku* sudo, int count_to_solve) 
 		if (fread(solution, sizeof(char), 81, file) != 81) break;
 		if (sudoku_check(sudo, solution)) {
 			printf("%-3d Correct solution in %d steps!\n", count + 1, steps);
+			res++;
 		} else {
 			printf("%-3d Incorrect solution :(\n", count + 1);
 		}
 		fseek(file, 1, SEEK_CUR);
 	}
 	fclose(file);
+
+	return res;
 }
 void sudoku_print_solution(const Sudoku* sudo) {
 	char buffer[81] = { 0 };
